@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +17,13 @@ class ProfileController extends Controller
      */
     public function edit(): View
     {
+        /** @var User $user */
         $user = Auth::user();
+        
+        // Eager load relasi role untuk tampilan view
+        $user->load('role');
+
+        // PENTING: Arahkan ke 'profile.edit' karena file ada di resources/views/profile/edit.blade.php
         return view('profile.edit', compact('user'));
     }
 
@@ -28,40 +35,39 @@ class ProfileController extends Controller
         /** @var User $user */
         $user = Auth::user();
 
-        // Validasi Input
+        // 1. Validasi Input
         $validated = $request->validate([
             'username'     => 'required|string|max:50|alpha_dash|unique:users,username,' . $user->id,
             'nama_lengkap' => 'required|string|max:255',
             'email'        => 'required|email|max:255|unique:users,email,' . $user->id,
             'no_whatsapp'  => 'nullable|string|max:20',
-            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048', // Maksimal 2MB
+            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
-        // Penanganan Upload Foto Profil
+        // 2. Upload Foto Profil
         if ($request->hasFile('foto')) {
-            // Hapus foto lama jika ada
             if ($user->foto && Storage::disk('public')->exists($user->foto)) {
                 Storage::disk('public')->delete($user->foto);
             }
-
-            // Simpan foto baru ke folder 'storage/app/public/profile-photos'
-            $path = $request->file('foto')->store('profile-photos', 'public');
-            $validated['foto'] = $path;
+            $validated['foto'] = $request->file('foto')->store('profile-photos', 'public');
         }
 
-        // Jika email diubah, atur ulang verifikasi email (Opsional)
+        // 3. Isi data ke instance model
+        $user->fill($validated);
+
+        // 4. Reset verifikasi jika email berubah
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        // Update data user
-        $user->update($validated);
+        // 5. Simpan perubahan
+        $user->save();
 
-        return redirect()->back()->with('success', 'Profil berhasil diperbarui!');
+        return redirect()->back()->with('status', 'profile-updated')->with('success', 'Profil berhasil diperbarui!');
     }
 
     /**
-     * Menghapus foto profil saja (Opsional).
+     * Menghapus foto profil saja.
      */
     public function deletePhoto(): RedirectResponse
     {

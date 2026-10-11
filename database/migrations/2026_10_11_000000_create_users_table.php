@@ -13,13 +13,15 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('username')->unique(); // Menggantikan 'name' & ditambahkan unique agar tidak duplikat
+            $table->string('foto')->nullable();
             $table->string('nama_lengkap');
+            $table->string('username')->unique();
             $table->string('email')->unique();
-            $table->string('no_whatsapp', 20)->nullable(); // Ukuran dialokasikan hingga 20 digit, diisi opsional/nullable
-            $table->string('foto')->nullable(); // Menyimpan path/nama file foto profil
+            $table->string('no_whatsapp', 20)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->rememberToken();
             $table->timestamps();
         });
