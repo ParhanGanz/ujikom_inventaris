@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\KategoriController;
 use Illuminate\Support\Facades\Route;
 
 // Halaman Depan / Landing Page
@@ -20,6 +21,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::resource('roles', RoleController::class)->names('role');
+        Route::resource('kategori', KategoriController::class)->names('kategori');
     });
     
     Route::middleware(['auth'])->group(function () {
