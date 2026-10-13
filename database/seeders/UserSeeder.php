@@ -8,31 +8,49 @@ use Illuminate\Support\Facades\Hash;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // 1. Akun Admin / User Utama
-        User::create([
-            'username'          => 'admin',
-            'nama_lengkap'      => 'Administrator Utama',
-            'email'             => 'admin@gmail.com',
-            'no_whatsapp'       => '081234567890',
-            'foto'              => null, // Bisa diisi path misal: 'profile-photos/default.png'
-            'email_verified_at' => now(),
-            'password'          => Hash::make('123'),
-        ]);
+        $users = [
+            [
+                'nama_lengkap' => 'Administrator Sistem',
+                'username'     => 'admin',
+                'email'        => 'admin@school.id',
+                'no_whatsapp'  => '081234567890',
+                'password'     => Hash::make('123'),
+                'role_id'      => 1, // Admin
+                'status'       => 'aktif',
+            ],
+            [
+                'nama_lengkap' => 'Petugas Sarpras',
+                'username'     => 'petugas',
+                'email'        => 'petugas@school.id',
+                'no_whatsapp'  => '081234567891',
+                'password'     => Hash::make('123'),
+                'role_id'      => 2, // Petugas
+                'status'       => 'aktif',
+            ],
+            [
+                'nama_lengkap' => 'Kepala Sekolah',
+                'username'     => 'kepala_sekolah',
+                'email'        => 'kepala@school.id',
+                'no_whatsapp'  => '081234567892',
+                'password'     => Hash::make('123'),
+                'role_id'      => 3, // Kepala Sekolah
+                'status'       => 'aktif',
+            ],
+            [
+                'nama_lengkap' => 'Wakil Sarpras',
+                'username'     => 'wakil_sarpras',
+                'email'        => 'wakilsarpras@school.id',
+                'no_whatsapp'  => '081234567893',
+                'password'     => Hash::make('123'),
+                'role_id'      => 4, // Wakil Sarpras
+                'status'       => 'aktif',
+            ],
+        ];
 
-        // 2. Akun User Regular 1
-        User::create([
-            'username'          => 'Parhan',
-            'nama_lengkap'      => 'Parhanzz',
-            'email'             => 'hanz@gmail.com',
-            'no_whatsapp'       => '082198765432',
-            'foto'              => null,
-            'email_verified_at' => now(),
-            'password'          => Hash::make('123'),
-        ]);
+        foreach ($users as $user) {
+            User::updateOrCreate(['username' => $user['username']], $user);
+        }
     }
 }
