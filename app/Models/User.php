@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Storage;
@@ -12,35 +12,22 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
-        'username',
+        'foto',
         'nama_lengkap',
+        'username',
         'email',
         'no_whatsapp',
-        'foto',
         'password',
+        'role_id',
+        'status',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -50,8 +37,15 @@ class User extends Authenticatable
     }
 
     /**
-     * Helper untuk mendapatkan URL foto profil.
-     * Jika tidak ada foto, mengembalikan avatar bawaan.
+     * Relasi ke model Role
+     */
+    public function role(): BelongsTo
+    {
+        return $this->belongsTo(Role::class);
+    }
+
+    /**
+     * Accessor URL foto
      */
     public function getFotoUrlAttribute(): string
     {
@@ -59,7 +53,6 @@ class User extends Authenticatable
             return Storage::url($this->foto);
         }
 
-        // Avatar placeholder default
         return 'https://ui-avatars.com/api/?name=' . urlencode($this->nama_lengkap ?? $this->username) . '&background=random';
     }
 }
