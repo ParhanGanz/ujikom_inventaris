@@ -71,8 +71,8 @@
                 </a>
 
                 <!-- Kategori Barang -->
-                @php $isKategori = request()->routeIs('kategori.*'); @endphp
-                <a href="" 
+                @php $isKategori = request()->routeIs('admin.kategori.*', 'kategori.*'); @endphp
+                <a href="{{ route('admin.kategori.index') }}" 
                    class="flex items-center space-x-3 px-3 py-2 text-xs sm:text-sm font-semibold rounded-xl transition-all duration-150 {{ $isKategori ? 'bg-indigo-50 text-indigo-600 font-bold' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:translate-x-0.5' }}">
                     <i class="fa-solid fa-tags w-4 text-center {{ $isKategori ? 'text-indigo-600' : 'text-slate-400' }}"></i>
                     <span>Kategori</span>
