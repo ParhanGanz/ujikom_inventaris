@@ -10,47 +10,30 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = [
+        // 1. Akun Admin
+        User::updateOrCreate(
+            ['username' => 'admin'],
             [
-                'nama_lengkap' => 'Administrator Sistem',
-                'username'     => 'admin',
-                'email'        => 'admin@school.id',
+                'nama_lengkap' => 'Administrator Utama',
+                'email'        => 'admin@smaknis.sch.id',
                 'no_whatsapp'  => '081234567890',
-                'password'     => Hash::make('123'),
+                'password'     => Hash::make('password123'),
                 'role_id'      => 1, // Admin
                 'status'       => 'aktif',
-            ],
+            ]
+        );
+
+        // 2. Akun Petugas Sarpras
+        User::updateOrCreate(
+            ['username' => 'petugas'],
             [
                 'nama_lengkap' => 'Petugas Sarpras',
-                'username'     => 'petugas',
-                'email'        => 'petugas@school.id',
+                'email'        => 'petugas@smaknis.sch.id',
                 'no_whatsapp'  => '081234567891',
-                'password'     => Hash::make('123'),
+                'password'     => Hash::make('password123'),
                 'role_id'      => 2, // Petugas
                 'status'       => 'aktif',
-            ],
-            [
-                'nama_lengkap' => 'Kepala Sekolah',
-                'username'     => 'kepala_sekolah',
-                'email'        => 'kepala@school.id',
-                'no_whatsapp'  => '081234567892',
-                'password'     => Hash::make('123'),
-                'role_id'      => 3, // Kepala Sekolah
-                'status'       => 'aktif',
-            ],
-            [
-                'nama_lengkap' => 'Wakil Sarpras',
-                'username'     => 'wakil_sarpras',
-                'email'        => 'wakilsarpras@school.id',
-                'no_whatsapp'  => '081234567893',
-                'password'     => Hash::make('123'),
-                'role_id'      => 4, // Wakil Sarpras
-                'status'       => 'aktif',
-            ],
-        ];
-
-        foreach ($users as $user) {
-            User::updateOrCreate(['username' => $user['username']], $user);
-        }
+            ]
+        );
     }
 }

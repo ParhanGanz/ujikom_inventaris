@@ -6,6 +6,9 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LokasiController;
+
+// Import Controller untuk Petugas
+use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 use Illuminate\Support\Facades\Route;
 
 // ==========================================
@@ -32,6 +35,12 @@ Route::redirect('/dashboard', '/admin/dashboard');
         Route::resource('kategori', KategoriController::class)->names('kategori');
         Route::resource('lokasi', LokasiController::class)->names('lokasi');
         Route::resource('users', UserController::class)->names('users');
+    });
+
+    // Area Petugas (/petugas/...)
+    Route::prefix('petugas')->name('petugas.')->group(function () {
+        Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->name('dashboard');
+        // Tambahkan route khusus petugas lainnya di sini (misal: resource transaksi, laporan, dll.)
     });
     
     // Route::middleware(['auth'])->group(function () {

@@ -14,7 +14,7 @@
     $masterData = [
         ['nama' => 'Data Barang', 'route' => 'admin.barang.index', 'aktif' => 'admin.barang.*', 'ikon' => 'fa-box-archive'],
         ['nama' => 'Kategori', 'route' => 'admin.kategori.index', 'aktif' => 'admin.kategori.*', 'ikon' => 'fa-tags'],
-        ['nama' => 'Role & Hak Akses', 'route' => 'admin.role.index', 'aktif' => 'admin.role.*', 'ikon' => 'fa-user-shield'],
+        ['nama' => 'Role', 'route' => 'admin.role.index', 'aktif' => 'admin.role.*', 'ikon' => 'fa-user-shield'],
         ['nama' => 'Lokasi Ruang', 'route' => 'admin.lokasi.index', 'aktif' => 'admin.lokasi.*', 'ikon' => 'fa-location-dot'],
         ['nama' => 'Supplier', 'route' => 'admin.suplier.index', 'aktif' => 'admin.suplier.*', 'ikon' => 'fa-truck-field'],
         ['nama' => 'Satuan Unit', 'route' => 'admin.unit.index', 'aktif' => 'admin.unit.*', 'ikon' => 'fa-layer-group'],

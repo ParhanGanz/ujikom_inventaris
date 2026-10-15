@@ -81,13 +81,12 @@ class UserController extends Controller
     /**
      * Tampilkan detail pengguna.
      */
-    public function show(User $user): View
+    public function show()
     {
-        $user->load('role');
-        return view('admin.users.show', compact('user'));
+
     }
 
-    /**
+    /** 
      * Tampilkan form edit pengguna.
      */
     public function edit(User $user): View
