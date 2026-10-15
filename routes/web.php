@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LokasiController;
 use Illuminate\Support\Facades\Route;
@@ -30,6 +31,7 @@ Route::redirect('/dashboard', '/admin/dashboard');
         Route::resource('roles', RoleController::class)->names('role');
         Route::resource('kategori', KategoriController::class)->names('kategori');
         Route::resource('lokasi', LokasiController::class)->names('lokasi');
+        Route::resource('users', UserController::class)->names('users');
     });
     
     // Route::middleware(['auth'])->group(function () {
