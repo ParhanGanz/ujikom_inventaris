@@ -1,138 +1,208 @@
-<header class="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-4 sm:px-6 z-20 sticky top-0"
-    x-data="{ 
-            dropdownOpen: false, 
-            timeString: '', 
-            dateString: '',
-            updateClock() {
-                const now = new Date();
-                const optionsDate = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' };
-                this.dateString = now.toLocaleDateString('id-ID', optionsDate);
-                this.timeString = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
-            }
-        }"
-    x-init="updateClock(); setInterval(() => updateClock(), 1000)">
+<header
+    class="sticky top-0 z-30 flex h-16 w-full items-center justify-between border-b border-slate-200 bg-white/95 px-4 shadow-sm backdrop-blur sm:px-6"
+    x-data="{
+        dropdownOpen: false,
+        timeString: '',
+        dateString: '',
+        updateClock() {
+            const now = new Date();
 
-    <!-- Left Section: Collapse Toggle, Search Bar & Realtime Clock -->
-    <div class="flex items-center space-x-3 sm:space-x-4">
-        <!-- Sidebar Toggle Button -->
-        <button class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+            this.dateString = now.toLocaleDateString('id-ID', {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric'
+            });
+
+            this.timeString = now.toLocaleTimeString('id-ID', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            }).replace(/\./g, ':');
+        }
+    }"
+    x-init="updateClock(); setInterval(() => updateClock(), 1000)"
+>
+    <!-- LEFT SECTION -->
+    <div class="flex min-w-0 items-center gap-3 sm:gap-4">
+
+        <!-- Sidebar Toggle: tampilan saja -->
+        <button
+            type="button"
+            aria-label="Menu navigasi"
+            title="Menu navigasi"
+            class="shrink-0 rounded-xl p-2 text-slate-500 transition hover:bg-indigo-50 hover:text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+        >
             <i class="fa-solid fa-bars text-lg"></i>
         </button>
 
         <!-- Search Bar -->
-        <div class="relative w-44 sm:w-64 lg:w-80">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
+        <div class="relative w-36 sm:w-52 lg:w-72">
+            <span class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400">
                 <i class="fa-solid fa-magnifying-glass text-sm"></i>
             </span>
-            <input type="text" placeholder="Search or type command..."
-                class="w-full pl-10 pr-10 py-1.5 text-xs sm:text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-800 placeholder-slate-400 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:outline-none transition">
-            <span class="absolute inset-y-0 right-0 hidden md:flex items-center pr-3">
-                <kbd class="px-1.5 py-0.5 text-[10px] font-semibold text-slate-400 bg-slate-200/60 border border-slate-300/60 rounded-md">⌘K</kbd>
-            </span>
+
+            <input
+                type="search"
+                placeholder="Cari sesuatu..."
+                aria-label="Cari sesuatu"
+                class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 pl-10 pr-3 text-xs text-slate-700 transition placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-4 focus:ring-indigo-500/10 sm:text-sm"
+            >
         </div>
 
-        <!-- Realtime Clock Widget (Disebelah Kanan Search Bar) -->
-        <div class="hidden lg:flex items-center space-x-2.5 pl-3 border-l border-slate-200 text-slate-600">
-            <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                <i class="fa-regular fa-clock text-sm"></i>
+        <!-- Realtime Clock -->
+        <div class="hidden items-center gap-2.5 border-l border-slate-200 pl-4 lg:flex">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                <i class="fa-regular fa-clock text-base"></i>
             </div>
+
             <div class="flex flex-col">
-                <span class="text-xs font-bold text-slate-800 leading-tight tracking-wider" x-text="timeString">00:00:00</span>
-                <span class="text-[10px] font-medium text-slate-400 leading-tight" x-text="dateString">Senin, 1 Jan 2026</span>
+                <span
+                    class="text-xs font-bold tracking-wide text-slate-800"
+                    x-text="timeString"
+                >00:00:00</span>
+
+                <span
+                    class="text-[10px] font-medium capitalize text-slate-400"
+                    x-text="dateString"
+                >Senin, 19 Okt 2026</span>
             </div>
         </div>
     </div>
 
-    <!-- Right Section: Actions & User Profile Dropdown -->
-    <div class="flex items-center space-x-2 sm:space-x-4">
-        <!-- Theme Switcher Icon -->
-        <button class="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition cursor-pointer">
+    <!-- RIGHT SECTION -->
+    <div class="ml-2 flex shrink-0 items-center gap-1 sm:gap-3">
+
+        <!-- Theme Button: tampilan saja -->
+        <button
+            type="button"
+            aria-label="Tema tampilan"
+            title="Tema tampilan"
+            class="hidden rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600 sm:block"
+        >
             <i class="fa-regular fa-moon text-lg"></i>
         </button>
 
-        <!-- Notification Bell -->
-        <button class="relative p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100 transition cursor-pointer">
+        <!-- Notification Button: tampilan saja -->
+        <button
+            type="button"
+            aria-label="Notifikasi"
+            title="Notifikasi"
+            class="relative rounded-xl p-2.5 text-slate-500 transition hover:bg-slate-100 hover:text-indigo-600"
+        >
             <i class="fa-regular fa-bell text-lg"></i>
-            <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-amber-500 rounded-full ring-2 ring-white"></span>
+
+            <span class="absolute right-2 top-2 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white"></span>
         </button>
 
-        <!-- Profile Section with Dropdown -->
-        <div class="relative pl-2 border-l border-slate-200" @click.outside="dropdownOpen = false">
-            <button @click="dropdownOpen = !dropdownOpen"
-                class="flex items-center space-x-2.5 sm:space-x-3 p-1.5 rounded-2xl hover:bg-slate-100/80 active:bg-slate-200/60 transition duration-150 cursor-pointer focus:outline-none group">
-
-                <!-- Informasi Nama & Role (Tampilan Lebih Elegan & Rapi) -->
-                <div class="text-right hidden sm:block">
-                    <p class="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-indigo-600 leading-snug tracking-tight transition-colors">
-                        {{ Auth::user()->nama_lengkap ?? Auth::user()->username }}
+        <!-- PROFILE DROPDOWN -->
+        <div
+            class="relative ml-1 border-l border-slate-200 pl-2 sm:pl-3"
+            @click.outside="dropdownOpen = false"
+            @keydown.escape.window="dropdownOpen = false"
+        >
+            <button
+                type="button"
+                @click="dropdownOpen = !dropdownOpen"
+                :aria-expanded="dropdownOpen.toString()"
+                aria-haspopup="true"
+                class="group flex items-center gap-2 rounded-xl p-1.5 transition hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 sm:gap-3"
+            >
+                <!-- User Information -->
+                <div class="hidden text-right sm:block">
+                    <p class="max-w-36 truncate text-xs font-bold text-slate-800 transition group-hover:text-indigo-600 sm:text-sm">
+                        {{ Auth::user()->nama_lengkap ?? Auth::user()->username ?? Auth::user()->name ?? 'Pengguna' }}
                     </p>
-                    <p class="text-[10px] sm:text-[11px] font-medium text-slate-400 leading-none mt-0.5 tracking-wide uppercase">
-                        {{ Auth::user()->role->name ?? 'Administrator' }}
+
+                    <p class="mt-0.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+                        @php
+                            $userRole = Auth::user()->role;
+                            $roleName = is_object($userRole)
+                                ? ($userRole->name ?? $userRole->nama_role ?? 'Pengguna')
+                                : ($userRole ?: 'Pengguna');
+                        @endphp
+
+                        {{ $roleName }}
                     </p>
                 </div>
 
-                <!-- Avatar Foto Profile dari Database / Storage -->
+                <!-- Avatar -->
                 <div class="relative shrink-0">
-                    @if (Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
-                    <img class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-slate-200 group-hover:ring-indigo-500/50 transition shadow-sm"
-                        src="{{ asset('storage/' . Auth::user()->foto) }}"
-                        alt="{{ Auth::user()->nama_lengkap }}">
+                    @if (
+                        Auth::user()->foto &&
+                        \Illuminate\Support\Facades\Storage::disk('public')->exists(Auth::user()->foto)
+                    )
+                        <img
+                            src="{{ asset('storage/' . Auth::user()->foto) }}"
+                            alt="Foto profil"
+                            class="h-9 w-9 rounded-full object-cover ring-2 ring-slate-200 transition group-hover:ring-indigo-400 sm:h-10 sm:w-10"
+                        >
                     @else
-                    <!-- Fallback Inisial / Default Avatar jika belum upload foto -->
-                    <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-indigo-600 to-indigo-500 text-white font-bold text-xs sm:text-sm flex items-center justify-center ring-2 ring-slate-200 group-hover:ring-indigo-500/50 shadow-sm transition">
-                        {{ strtoupper(substr(Auth::user()->nama_lengkap ?? Auth::user()->username ?? 'U', 0, 1)) }}
-                    </div>
+                        <div class="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-indigo-600 to-violet-500 text-sm font-bold text-white shadow-sm ring-2 ring-slate-200 transition group-hover:ring-indigo-400 sm:h-10 sm:w-10">
+                            {{ strtoupper(substr(Auth::user()->nama_lengkap ?? Auth::user()->username ?? Auth::user()->name ?? 'U', 0, 1)) }}
+                        </div>
                     @endif
 
-                    <!-- Indicator Status Online (Hijau) -->
-                    <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+                    <!-- Online Indicator -->
+                    <span class="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-emerald-500"></span>
                 </div>
 
-                <!-- Icon Chevron -->
-                <i class="fa-solid fa-chevron-down text-[11px] text-slate-400 group-hover:text-slate-600 transition-transform duration-200"
-                    :class="dropdownOpen ? 'rotate-180' : ''"></i>
+                <!-- Chevron -->
+                <i
+                    class="fa-solid fa-chevron-down hidden text-[10px] text-slate-400 transition duration-200 group-hover:text-indigo-600 sm:block"
+                    :class="dropdownOpen ? 'rotate-180' : ''"
+                ></i>
             </button>
 
             <!-- Dropdown Menu -->
-            <div x-show="dropdownOpen"
+            <div
                 x-cloak
-                x-transition:enter="transition ease-out duration-200 transform"
-                x-transition:enter-start="opacity-0 scale-95 -translate-y-2"
-                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-150 transform"
-                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
-                x-transition:leave-end="opacity-0 scale-95 -translate-y-2"
-                class="absolute right-0 mt-2 w-48 sm:w-56 bg-white rounded-2xl shadow-xl border border-slate-100 py-2 z-50">
-
-                <!-- Detail Pengguna di Mobile -->
-                <div class="px-4 py-2.5 border-b border-slate-100 sm:hidden">
-                    <p class="text-xs font-bold text-slate-800 truncate">
-                        {{ Auth::user()->nama_lengkap ?? Auth::user()->name ?? 'Musharof' }}
+                x-show="dropdownOpen"
+                x-transition:enter="transition ease-out duration-150"
+                x-transition:enter-start="translate-y-1 opacity-0 scale-95"
+                x-transition:enter-end="translate-y-0 opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-100"
+                x-transition:leave-start="translate-y-0 opacity-100 scale-100"
+                x-transition:leave-end="translate-y-1 opacity-0 scale-95"
+                class="absolute right-0 z-50 mt-3 w-56 origin-top-right rounded-2xl border border-slate-100 bg-white py-2 shadow-xl shadow-slate-900/10"
+            >
+                <!-- Mobile User Information -->
+                <div class="border-b border-slate-100 px-4 py-3 sm:hidden">
+                    <p class="truncate text-sm font-bold text-slate-800">
+                        {{ Auth::user()->nama_lengkap ?? Auth::user()->username ?? Auth::user()->name ?? 'Pengguna' }}
                     </p>
-                    <p class="text-[10px] text-slate-400 font-medium">
-                        {{ Auth::user()->role ?? 'Administrator' }}
+
+                    <p class="mt-1 text-xs font-medium text-slate-400">
+                        {{ $roleName }}
                     </p>
                 </div>
 
-                <div class="px-1 space-y-0.5">
-                    <!-- Edit Profile -->
-                    <a href="{{ route('profile.edit') }}"
-                        class="flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/60 rounded-xl transition">
-                        <i class="fa-regular fa-user-circle text-base text-slate-400"></i>
+                <!-- Profile Link -->
+                <div class="px-2">
+                    <a
+                        href="{{ route('profile.edit') }}"
+                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-600"
+                    >
+                        <i class="fa-regular fa-user w-5 text-center text-base"></i>
                         <span>Edit Profil</span>
                     </a>
                 </div>
 
-                <div class="border-t border-slate-100 my-1"></div>
+                <!-- Divider -->
+                <div class="my-1 border-t border-slate-100"></div>
 
-                <!-- Logout Form -->
-                <div class="px-1">
+                <!-- Logout -->
+                <div class="px-2">
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit"
-                            class="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50/80 rounded-xl transition cursor-pointer">
-                            <i class="fa-solid fa-arrow-right-from-bracket text-base text-rose-500"></i>
-                            <span>Keluar (Logout)</span>
+
+                        <button
+                            type="submit"
+                            class="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-semibold text-rose-600 transition hover:bg-rose-50"
+                        >
+                            <i class="fa-solid fa-arrow-right-from-bracket w-5 text-center text-base"></i>
+                            <span>Keluar dari Akun</span>
                         </button>
                     </form>
                 </div>
@@ -140,3 +210,10 @@
         </div>
     </div>
 </header>
+
+<!-- Prevent Alpine elements from flashing before initialization -->
+<style>
+    [x-cloak] {
+        display: none !important;
+    }
+</style>

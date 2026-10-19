@@ -6,22 +6,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Inventaris SMAKNIS') }}</title>
-
-    <!-- Alpine.js Collapse Plugin -->
-    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
-    <!-- Alpine.js Core -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <title>
+        @yield('title', config('app.name', 'Inventaris SMAKNIS'))
+    </title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600,700&display=swap" rel="stylesheet" />
 
-    <!-- Font Awesome CDN -->
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.1/css/all.min.css" />
 
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Tailwind Custom Colors -->
     <script>
         tailwind.config = {
             theme: {
@@ -34,34 +33,46 @@
                             600: '#4338ca',
                             700: '#3730a3',
                         }
+                    },
+                    fontFamily: {
+                        sans: ['Figtree', 'sans-serif'],
                     }
                 }
             }
         }
     </script>
+
+    <!-- Alpine.js Core -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- Alpine.js Collapse Plugin -->
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
 </head>
 
-<body class="font-sans antialiased bg-[#f1f5f9] text-slate-700 h-full">
-    <div class="min-h-screen flex">
-        <!-- Sidebar Navigation -->
-        @include('layouts.sidebar')
+<body class="min-h-screen bg-slate-50 font-sans antialiased text-slate-700">
 
-        <!-- Main Wrapper -->
-        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-            <!-- Top Navigation / Header -->
-            @include('layouts.navigation')
+    <!-- Sidebar -->
+    @include('layouts.sidebar')
 
-            <!-- Main Content Area -->
-            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#f1f5f9]">
-                <div class="max-w-7xl mx-auto">
-                    @yield('content')
-                </div>
-            </main>
+    <!-- Main Content Wrapper -->
+    <div class="ml-64 flex min-h-screen min-w-0 flex-col">
 
-            <!-- Footer -->
-            @include('layouts.footer')
-        </div>
+        @include('layouts.navigation')
+
+        <!-- Main Content -->
+        <main class="min-w-0 flex-1 p-4 pb-24 sm:p-6 sm:pb-24 lg:p-8 lg:pb-24">
+            <div class="mx-auto w-full max-w-7xl">
+                @yield('content')
+            </div>
+        </main>
+
     </div>
+
+    <!-- Footer tetap di bawah layar -->
+    @include('layouts.footer')
+
+    </div>
+
 </body>
 
 </html>

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LokasiController;
+use App\Http\Controllers\Admin\PenanggungJawabController;
 
 // Controller Petugas
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
@@ -22,10 +23,6 @@ use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardControll
 // ==========================================
 // 1. HALAMAN UTAMA / WELCOME
 // ==========================================
-
-// AKTIF UNTUK PRESENTASI:
-// Saat website dibuka melalui http://127.0.0.1:8000/
-// halaman welcome akan ditampilkan.
 Route::view('/', 'welcome')->name('welcome');
 
 // AKTIFKAN KEMBALI JIKA INGIN HALAMAN UTAMA
@@ -63,6 +60,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     // Manajemen Lokasi dan Ruangan
     Route::resource('lokasi', LokasiController::class)
         ->names('lokasi');
+
+    // Manajemen Penanggung Jawab
+    Route::resource('penanggung_jawabs', PenanggungJawabController::class)
+        ->names('penanggung_jawab');
 
     // Manajemen Pengguna
     Route::resource('users', UserController::class)
