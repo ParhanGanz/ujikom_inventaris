@@ -18,24 +18,37 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::with('role')->latest();
+        $query = User::with('role')
+            ->leftJoin('roles', 'users.role_id', '=', 'roles.id')
+            ->select('users.*')
+            ->orderByRaw("
+            CASE LOWER(roles.nama)
+                WHEN 'admin' THEN 1
+                WHEN 'petugas' THEN 2
+                ELSE 3
+            END
+        ")
+            ->latest('users.created_at');
 
-        // Fitur Pencarian berdasarkan nama/username/email
+        // Pencarian nama, username, atau email
         if ($request->filled('search')) {
             $search = $request->search;
+
             $query->where(function ($q) use ($search) {
-                $q->where('nama_lengkap', 'like', "%{$search}%")
-                  ->orWhere('username', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                $q->where('users.nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('users.username', 'like', "%{$search}%")
+                    ->orWhere('users.email', 'like', "%{$search}%");
             });
         }
 
-        // Filter berdasarkan Role
+        // Filter berdasarkan role
         if ($request->filled('role_id')) {
-            $query->where('role_id', $request->role_id);
+            $query->where('users.role_id', $request->role_id);
         }
 
+        // Pagination tetap 10 pengguna per halaman
         $users = $query->paginate(10)->withQueryString();
+
         $roles = Role::all();
 
         return view('admin.users.index', compact('users', 'roles'));
@@ -81,10 +94,7 @@ class UserController extends Controller
     /**
      * Tampilkan detail pengguna.
      */
-    public function show()
-    {
-
-    }
+    public function show() {}
 
     /** 
      * Tampilkan form edit pengguna.

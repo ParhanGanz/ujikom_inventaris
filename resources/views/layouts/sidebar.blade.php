@@ -1,4 +1,3 @@
-
 @php
     // Menu utama
     $menuUtama = [
@@ -33,7 +32,7 @@
     // Laporan dan akun
     $menuLain = [
         ['nama' => 'Laporan Rekap', 'route' => 'admin.laporan.index', 'aktif' => 'admin.laporan.*', 'ikon' => 'fa-file-lines'],
-        ['nama' => 'Kelola Pengguna', 'route' => 'admin.users.index', 'aktif' => 'admin.users.*', 'ikon' => 'fa-users'],
+        ['nama' => 'Direktori Pengguna', 'route' => 'admin.users.index', 'aktif' => 'admin.users.*', 'ikon' => 'fa-users'],
     ];
 
     // Periksa apakah submenu master data sedang aktif

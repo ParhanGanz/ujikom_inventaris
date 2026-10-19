@@ -61,7 +61,7 @@
             <button @click="dropdownOpen = !dropdownOpen"
                 class="flex items-center space-x-2.5 sm:space-x-3 p-1.5 rounded-2xl hover:bg-slate-100/80 active:bg-slate-200/60 transition duration-150 cursor-pointer focus:outline-none group">
 
-                {{-- <!-- Informasi Nama & Role (Tampilan Lebih Elegan & Rapi) -->
+                <!-- Informasi Nama & Role (Tampilan Lebih Elegan & Rapi) -->
                 <div class="text-right hidden sm:block">
                     <p class="text-xs sm:text-sm font-semibold text-slate-800 group-hover:text-indigo-600 leading-snug tracking-tight transition-colors">
                         {{ Auth::user()->nama_lengkap ?? Auth::user()->username }}
@@ -69,9 +69,9 @@
                     <p class="text-[10px] sm:text-[11px] font-medium text-slate-400 leading-none mt-0.5 tracking-wide uppercase">
                         {{ Auth::user()->role->name ?? 'Administrator' }}
                     </p>
-                </div> --}}
+                </div>
 
-                {{-- <!-- Avatar Foto Profile dari Database / Storage -->
+                <!-- Avatar Foto Profile dari Database / Storage -->
                 <div class="relative shrink-0">
                     @if (Auth::user()->foto && Storage::disk('public')->exists(Auth::user()->foto))
                     <img class="w-8 h-8 sm:w-9 sm:h-9 rounded-full object-cover ring-2 ring-slate-200 group-hover:ring-indigo-500/50 transition shadow-sm"
@@ -86,7 +86,7 @@
 
                     <!-- Indicator Status Online (Hijau) -->
                     <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
-                </div> --}}
+                </div>
 
                 <!-- Icon Chevron -->
                 <i class="fa-solid fa-chevron-down text-[11px] text-slate-400 group-hover:text-slate-600 transition-transform duration-200"

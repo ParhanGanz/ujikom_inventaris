@@ -13,7 +13,6 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->string('ruangan');
             $table->text('keterangan')->nullable();
-            $table->string('penanggung_jawab');
             $table->timestamps();
         });
     }

@@ -94,11 +94,11 @@
                 <!-- Role -->
                 <div>
                     <label for="role_id" class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-2">
-                        ROLE HAK AKSES <span class="text-rose-500">*</span>
+                        ROLE/JABATAN <span class="text-rose-500">*</span>
                     </label>
                     <select id="role_id" name="role_id" required 
                             class="w-full px-4 py-2.5 bg-slate-50 border @error('role_id') border-rose-400 @else border-slate-200 @enderror rounded-xl text-sm text-slate-700 focus:outline-none focus:border-brand-500 focus:bg-white transition-all">
-                        <option value="">-- Pilih Role --</option>
+                        <option value="">-- Pilih Role/Jabatan --</option>
                         @foreach($roles as $r)
                             <option value="{{ $r->id }}" {{ old('role_id') == $r->id ? 'selected' : '' }}>{{ $r->nama }}</option>
                         @endforeach
