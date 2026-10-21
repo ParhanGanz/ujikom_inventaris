@@ -23,7 +23,17 @@ use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardControll
 // ==========================================
 // 1. HALAMAN UTAMA / WELCOME
 // ==========================================
-Route::view('/', 'welcome')->name('welcome');
+// Route welcome dinonaktifkan sementara.
+// Aktifkan kembali jika ingin menampilkan halaman welcome.
+// Route::view('/', 'welcome')->name('welcome');
+
+
+// ==========================================
+// 1. HALAMAN UTAMA
+// ==========================================
+// Halaman utama langsung menuju login.
+Route::redirect('/', '/login');
+
 
 // AKTIFKAN KEMBALI JIKA INGIN HALAMAN UTAMA
 // LANGSUNG MENUJU DASHBOARD ADMIN:
@@ -106,10 +116,6 @@ Route::middleware(['auth'])->group(function () {
 // 6. ROUTE AUTENTIKASI
 // ==========================================
 
-// AKTIF UNTUK PRESENTASI:
 // Mengaktifkan route login, logout, dan route autentikasi
 // lain yang didefinisikan dalam routes/auth.php.
 require __DIR__ . '/auth.php';
-
-// JANGAN NONAKTIFKAN BAGIAN DI ATAS JIKA LOGIN
-// DAN LOGOUT MASIH INGIN DIGUNAKAN.

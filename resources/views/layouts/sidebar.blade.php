@@ -71,7 +71,7 @@
             'admin.lokasi.*',
             'admin.suplier.*',
             'admin.unit.*',
-            'admin.penanggung-jawab.*',
+            'admin.penanggung_jawab.*',
         )
             ? 'true'
             : 'false' }} }">
@@ -85,7 +85,7 @@
                         'admin.lokasi.*',
                         'admin.suplier.*',
                         'admin.unit.*',
-                        'admin.penanggung-jawab.*',
+                        'admin.penanggung_jawab.*',
                     )
                         ? 'text-indigo-600'
                         : 'text-slate-400 hover:text-slate-600' }}">
@@ -128,7 +128,7 @@
                 </a>
 
                 {{-- ROLE --}}
-                <a href="{{ route('admin.role.index') }}"
+                {{-- <a href="{{ route('admin.role.index') }}"
                     class="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-200
                    {{ request()->routeIs('admin.role.*')
                        ? 'bg-indigo-50 font-bold text-indigo-700'
@@ -143,7 +143,7 @@
                         {{ request()->routeIs('admin.role.*') ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500' }}"></i>
 
                     <span class="flex-1">Role</span>
-                </a>
+                </a> --}}
 
                 {{-- LOKASI RUANG --}}
                 <a href="{{ route('admin.lokasi.index') }}"
@@ -179,12 +179,22 @@
                     <span class="flex-1">Satuan Unit</span>
                 </a>
 
-                {{-- PENANGGUNG JAWAB --}}
+                {{-- Penanggung Jawab Ruangan --}}
                 <a href="{{ route('admin.penanggung_jawab.index') }}"
-                    class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600">
+                    class="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-200
+                   {{ request()->routeIs('admin.penanggung_jawab.*')
+                       ? 'bg-indigo-50 font-bold text-indigo-700'
+                       : 'font-medium text-slate-500 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600' }}">
+
+                    @if (request()->routeIs('admin.penanggung_jawab.*'))
+                        <span class="absolute inset-y-2 left-0 w-1 rounded-r-full bg-indigo-600"></span>
+                    @endif
+
                     <i
-                        class="fa-solid fa-user-tie w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
-                    <span class="flex-1">Penanggung Jawab</span>
+                        class="fa-regular fa-circle-user w-4 text-center text-[11px]
+                        {{ request()->routeIs('admin.penanggung_jawab.*') ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500' }}"></i>
+
+                    <span class="flex-1">Penanggung jawab Ruangan</span>
                 </a>
 
             </div>
@@ -231,6 +241,12 @@
                     <i
                         class="fa-solid fa-screwdriver-wrench w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
                     <span>Pemeliharaan</span>
+                </a>
+                <a href="#"
+                    class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 transition-all hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600">
+                    <i
+                        class="fa-solid fa-check-to-slot w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
+                    <span>Rekomendasi Pengadaan Barang</span>
                 </a>
 
             </div>

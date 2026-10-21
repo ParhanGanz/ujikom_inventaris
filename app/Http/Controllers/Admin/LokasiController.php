@@ -14,11 +14,10 @@ class LokasiController extends Controller
      */
     public function index()
     {
-        $lokasi = Lokasi::latest('id')->get();
+        $lokasi = Lokasi::oldest('id')->get();
 
         return view('admin.lokasi.index', compact('lokasi'));
     }
-
     /**
      * Menampilkan form tambah lokasi.
      */

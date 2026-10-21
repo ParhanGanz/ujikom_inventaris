@@ -178,7 +178,7 @@
                     </p>
                 </div>
 
-                <!-- Profile Link -->
+                {{-- <!-- Profile Link -->
                 <div class="px-2">
                     <a
                         href="{{ route('profile.edit') }}"
@@ -187,7 +187,7 @@
                         <i class="fa-regular fa-user w-5 text-center text-base"></i>
                         <span>Edit Profil</span>
                     </a>
-                </div>
+                </div> --}}
 
                 <!-- Divider -->
                 <div class="my-1 border-t border-slate-100"></div>

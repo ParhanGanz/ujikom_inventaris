@@ -88,7 +88,7 @@
                         <th class="px-5 py-4 font-bold">No.</th>
                         <th class="px-5 py-4 font-bold">Kode Lokasi</th>
                         <th class="px-5 py-4 font-bold">Nama Ruangan</th>
-                        <th class="px-5 py-4 font-bold">Keterangan</th>
+                        <th class="px-5 py-4 font-bold">Keterangan Lokasi</th>
                         <th class="px-5 py-4 font-bold text-center">Aksi</th>
                     </tr>
                 </thead>
