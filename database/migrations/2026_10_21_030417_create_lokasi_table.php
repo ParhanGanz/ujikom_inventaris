@@ -12,6 +12,12 @@ return new class extends Migration
             $table->id();
             $table->string('kode')->unique();
             $table->string('ruangan');
+
+            $table->foreignId('id_penanggung_jawab')
+                ->constrained('penanggung_jawab')
+                ->restrictOnDelete()
+                ->cascadeOnUpdate();
+
             $table->text('keterangan')->nullable();
             $table->timestamps();
         });

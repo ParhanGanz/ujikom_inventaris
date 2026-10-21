@@ -72,7 +72,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ->names('lokasi');
 
     // Manajemen Penanggung Jawab
-    Route::resource('penanggung_jawabs', PenanggungJawabController::class)
+    Route::resource('penanggung_jawab', PenanggungJawabController::class)
         ->names('penanggung_jawab');
 
     // Manajemen Pengguna

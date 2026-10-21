@@ -3,21 +3,17 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Lokasi;
 use App\Models\PenanggungJawab;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class PenanggungJawabController extends Controller
 {
-    /**
-     * Menampilkan daftar penanggung jawab.
-     */
     public function index(Request $request)
     {
         $search = $request->input('search');
 
-        $penanggungJawabs = PenanggungJawab::with('lokasi')
+        $penanggungJawabs = PenanggungJawab::query()
             ->when($search, function ($query, $search) {
                 $query->where(function ($q) use ($search) {
                     $q->where('nama_lengkap', 'like', "%{$search}%")
@@ -26,7 +22,7 @@ class PenanggungJawabController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
-            ->latest()
+            ->oldest()
             ->paginate(10)
             ->withQueryString();
 
@@ -36,19 +32,11 @@ class PenanggungJawabController extends Controller
         );
     }
 
-    /**
-     * Menampilkan form tambah.
-     */
     public function create()
     {
-        $lokasis = Lokasi::orderBy('ruangan')->get();
-
-        return view('admin.penanggung_jawab.create', compact('lokasis'));
+        return view('admin.penanggung_jawab.create');
     }
 
-    /**
-     * Menyimpan penanggung jawab baru.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -60,16 +48,13 @@ class PenanggungJawabController extends Controller
             ],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jabatan' => ['required', 'string', 'max:100'],
-            'id_lokasi' => [
-                'required',
-                'integer',
-                'exists:lokasi,id',
-                'unique:penanggung_jawab,id_lokasi',
-            ],
             'no_telepon' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
             'status' => ['required', Rule::in(['aktif', 'tidak'])],
         ]);
+
+        // NIP/NUPTK kosong disimpan sebagai NULL.
+        $validated['nip_nutpk'] = $validated['nip_nutpk'] ?: null;
 
         PenanggungJawab::create($validated);
 
@@ -78,35 +63,22 @@ class PenanggungJawabController extends Controller
             ->with('success', 'Penanggung jawab berhasil ditambahkan.');
     }
 
-    /**
-     * Menampilkan detail penanggung jawab.
-     */
     public function show(PenanggungJawab $penanggung_jawab)
     {
-        $penanggung_jawab->load('lokasi');
-
         return view(
             'admin.penanggung_jawab.show',
             compact('penanggung_jawab')
         );
     }
 
-    /**
-     * Menampilkan form edit.
-     */
     public function edit(PenanggungJawab $penanggung_jawab)
     {
-        $lokasis = Lokasi::orderBy('ruangan')->get();
-
         return view(
             'admin.penanggung_jawab.edit',
-            compact('penanggung_jawab', 'lokasis')
+            compact('penanggung_jawab')
         );
     }
 
-    /**
-     * Memperbarui data penanggung jawab.
-     */
     public function update(
         Request $request,
         PenanggungJawab $penanggung_jawab
@@ -121,17 +93,12 @@ class PenanggungJawabController extends Controller
             ],
             'nama_lengkap' => ['required', 'string', 'max:255'],
             'jabatan' => ['required', 'string', 'max:100'],
-            'id_lokasi' => [
-                'required',
-                'integer',
-                'exists:lokasi,id',
-                Rule::unique('penanggung_jawab', 'id_lokasi')
-                    ->ignore($penanggung_jawab->id),
-            ],
             'no_telepon' => ['nullable', 'string', 'max:20'],
             'email' => ['nullable', 'email', 'max:255'],
             'status' => ['required', Rule::in(['aktif', 'tidak'])],
         ]);
+
+        $validated['nip_nutpk'] = $validated['nip_nutpk'] ?: null;
 
         $penanggung_jawab->update($validated);
 
@@ -140,9 +107,6 @@ class PenanggungJawabController extends Controller
             ->with('success', 'Data penanggung jawab berhasil diperbarui.');
     }
 
-    /**
-     * Menghapus data penanggung jawab.
-     */
     public function destroy(PenanggungJawab $penanggung_jawab)
     {
         $penanggung_jawab->delete();

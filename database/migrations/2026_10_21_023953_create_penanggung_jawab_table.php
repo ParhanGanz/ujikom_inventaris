@@ -11,14 +11,8 @@ return new class extends Migration
         Schema::create('penanggung_jawab', function (Blueprint $table) {
             $table->id();
             $table->string('nip_nutpk')->nullable()->unique();
-
             $table->string('nama_lengkap');
             $table->string('jabatan');
-            $table->foreignId('id_lokasi')
-                ->unique()
-                ->constrained('lokasi')
-                ->cascadeOnUpdate()
-                ->restrictOnDelete();
             $table->string('no_telepon', 20)->nullable();
             $table->string('email')->nullable();
             $table->enum('status', ['aktif', 'tidak'])

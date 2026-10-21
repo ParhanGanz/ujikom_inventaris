@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Lokasi;
+use App\Models\PenanggungJawab;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
@@ -12,12 +13,26 @@ class LokasiController extends Controller
     /**
      * Menampilkan semua lokasi.
      */
+
     public function index()
     {
-        $lokasi = Lokasi::oldest('id')->get();
+        $lokasi = Lokasi::with('penanggungJawab')
+            ->oldest('id')
+            ->get();
 
-        return view('admin.lokasi.index', compact('lokasi'));
+        $kodeBaru = $this->generateKode();
+
+        $penanggungJawabs = PenanggungJawab::where('status', 'aktif')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return view(
+            'admin.lokasi.index',
+            compact('lokasi', 'kodeBaru', 'penanggungJawabs')
+        );
     }
+
+
     /**
      * Menampilkan form tambah lokasi.
      */
@@ -25,7 +40,14 @@ class LokasiController extends Controller
     {
         $kodeBaru = $this->generateKode();
 
-        return view('admin.lokasi.create', compact('kodeBaru'));
+        $penanggungJawabs = PenanggungJawab::where('status', 'aktif')
+            ->orderBy('nama_lengkap')
+            ->get();
+
+        return view(
+            'admin.lokasi.create',
+            compact('kodeBaru', 'penanggungJawabs')
+        );
     }
 
     /**
@@ -33,19 +55,37 @@ class LokasiController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'ruangan' => ['required', 'string', 'max:255'],
+        $validated = $request->validate([
+            'kode' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:lokasi,kode',
+            ],
+            'ruangan' => [
+                'required',
+                'string',
+                'max:255',
+                'unique:lokasi,ruangan',
+            ],
+            'id_penanggung_jawab' => [
+                'required',
+                'integer',
+                'exists:penanggung_jawab,id',
+            ],
             'keterangan' => ['nullable', 'string'],
         ], [
+            'kode.required' => 'Kode lokasi wajib diisi.',
+            'kode.unique' => 'Kode lokasi tersebut sudah digunakan.',
             'ruangan.required' => 'Nama ruangan wajib diisi.',
-            'ruangan.max' => 'Nama ruangan maksimal 255 karakter.',
+            'ruangan.unique' => 'Nama ruangan tersebut sudah digunakan.',
+            'id_penanggung_jawab.required' =>
+            'Penanggung jawab wajib dipilih.',
+            'id_penanggung_jawab.exists' =>
+            'Penanggung jawab yang dipilih tidak ditemukan.',
         ]);
 
-        Lokasi::create([
-            'kode' => $this->generateKode(),
-            'ruangan' => $request->ruangan,
-            'keterangan' => $request->keterangan,
-        ]);
+        Lokasi::create($validated);
 
         return redirect()
             ->route('admin.lokasi.index')
@@ -53,8 +93,7 @@ class LokasiController extends Controller
     }
 
     /**
-     * Route detail tetap tersedia sebagai bagian resource.
-     * Halaman detail terpisah belum digunakan.
+     * Halaman detail belum digunakan.
      */
     public function show(Lokasi $lokasi)
     {
@@ -62,7 +101,7 @@ class LokasiController extends Controller
     }
 
     /**
-     * Edit dilakukan melalui modal di halaman index.
+     * Edit lokasi dilakukan melalui modal di halaman index.
      */
     public function edit(Lokasi $lokasi)
     {
@@ -74,24 +113,37 @@ class LokasiController extends Controller
      */
     public function update(Request $request, Lokasi $lokasi)
     {
-        $request->validate([
+        $validated = $request->validate([
+            'kode' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('lokasi', 'kode')->ignore($lokasi->id),
+            ],
             'ruangan' => [
                 'required',
                 'string',
                 'max:255',
                 Rule::unique('lokasi', 'ruangan')->ignore($lokasi->id),
             ],
+            'id_penanggung_jawab' => [
+                'required',
+                'integer',
+                'exists:penanggung_jawab,id',
+            ],
             'keterangan' => ['nullable', 'string'],
         ], [
+            'kode.required' => 'Kode lokasi wajib diisi.',
+            'kode.unique' => 'Kode lokasi tersebut sudah digunakan.',
             'ruangan.required' => 'Nama ruangan wajib diisi.',
-            'ruangan.max' => 'Nama ruangan maksimal 255 karakter.',
             'ruangan.unique' => 'Nama ruangan tersebut sudah digunakan.',
+            'id_penanggung_jawab.required' =>
+            'Penanggung jawab wajib dipilih.',
+            'id_penanggung_jawab.exists' =>
+            'Penanggung jawab yang dipilih tidak ditemukan.',
         ]);
 
-        $lokasi->update([
-            'ruangan' => $request->ruangan,
-            'keterangan' => $request->keterangan,
-        ]);
+        $lokasi->update($validated);
 
         return redirect()
             ->route('admin.lokasi.index')
