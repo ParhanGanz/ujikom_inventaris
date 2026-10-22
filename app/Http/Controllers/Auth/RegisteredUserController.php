@@ -14,33 +14,64 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
+    /**
+     * Menampilkan halaman registrasi.
+     */
     public function create(): View
     {
         return view('auth.register');
     }
 
+    /**
+     * Memproses registrasi pengguna.
+     */
     public function store(Request $request): RedirectResponse
     {
-        $request->validate([
-            'nama_lengkap' => ['required', 'string', 'max:255'],
-            'username'     => ['required', 'string', 'max:50', 'alpha_dash', 'unique:'.User::class],
-            'email'        => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password'     => ['required', 'confirmed', Rules\Password::defaults()],
+        $validated = $request->validate([
+            'nama_lengkap' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'alpha_dash',
+                'unique:users,username',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'max:255',
+                'unique:users,email',
+            ],
+            'password' => [
+                'required',
+                'confirmed',
+                Rules\Password::defaults(),
+            ],
         ]);
 
         $user = User::create([
-            'nama_lengkap' => $request->nama_lengkap,
-            'username'     => $request->username,
-            'email'        => $request->email,
-            'password'     => Hash::make($request->password),
-            'role_id'      => 2, // Default role pendaftar baru (misal: Petugas)
-            'status'       => 'aktif',
+            'nama_lengkap' => $validated['nama_lengkap'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => Hash::make($validated['password']),
+
+            // Role selalu petugas untuk registrasi publik.
+            'role' => 'petugas',
+
+            // Status awal akun.
+            'status' => 'aktif',
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('admin.dashboard', absolute: false));
+        return redirect(route('petugas.dashboard', absolute: false));
     }
 }

@@ -106,7 +106,7 @@
                     class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600">
                     <i
                         class="fa-solid fa-box w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
-                    <span class="flex-1">Data Barang</span>
+                    <span class="flex-1">Kelola Data Barang</span>
                 </a>
 
                 {{-- KATEGORI --}}
@@ -124,26 +124,8 @@
                         class="fa-solid fa-layer-group w-4 text-center text-[11px]
                         {{ request()->routeIs('admin.kategori.*') ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500' }}"></i>
 
-                    <span class="flex-1">Kategori</span>
+                    <span class="flex-1">Kelola Kategori</span>
                 </a>
-
-                {{-- ROLE --}}
-                {{-- <a href="{{ route('admin.role.index') }}"
-                    class="group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs transition-all duration-200
-                   {{ request()->routeIs('admin.role.*')
-                       ? 'bg-indigo-50 font-bold text-indigo-700'
-                       : 'font-medium text-slate-500 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600' }}">
-
-                    @if (request()->routeIs('admin.role.*'))
-                        <span class="absolute inset-y-2 left-0 w-1 rounded-r-full bg-indigo-600"></span>
-                    @endif
-
-                    <i
-                        class="fa-solid fa-user-shield w-4 text-center text-[11px]
-                        {{ request()->routeIs('admin.role.*') ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500' }}"></i>
-
-                    <span class="flex-1">Role</span>
-                </a> --}}
 
                 {{-- LOKASI RUANG --}}
                 <a href="{{ route('admin.lokasi.index') }}"
@@ -160,7 +142,7 @@
                         class="fa-solid fa-location-dot w-4 text-center text-[11px]
                         {{ request()->routeIs('admin.lokasi.*') ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500' }}"></i>
 
-                    <span class="flex-1">Lokasi Ruang</span>
+                    <span class="flex-1">Kelola Lokasi Ruang</span>
                 </a>
 
                 {{-- SUPPLIER --}}
@@ -168,7 +150,7 @@
                     class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600">
                     <i
                         class="fa-solid fa-truck-field w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
-                    <span class="flex-1">Supplier</span>
+                    <span class="flex-1">Kelola Supplier</span>
                 </a>
 
                 {{-- SATUAN UNIT --}}
@@ -176,7 +158,7 @@
                     class="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-500 transition-all duration-200 hover:translate-x-0.5 hover:bg-slate-50 hover:text-indigo-600">
                     <i
                         class="fa-solid fa-ruler-combined w-4 text-center text-[11px] text-slate-400 group-hover:text-indigo-500"></i>
-                    <span class="flex-1">Satuan Unit</span>
+                    <span class="flex-1">Kelola Unit</span>
                 </a>
 
                 {{-- Penanggung Jawab Ruangan --}}

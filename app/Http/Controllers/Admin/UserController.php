@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -18,40 +19,49 @@ class UserController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = User::with('role')
-            ->leftJoin('roles', 'users.role_id', '=', 'roles.id')
-            ->select('users.*')
+        $query = User::query()
             ->orderByRaw("
-            CASE LOWER(roles.nama)
-                WHEN 'admin' THEN 1
-                WHEN 'petugas' THEN 2
-                ELSE 3
-            END
-        ")
-            ->latest('users.created_at');
+                CASE role
+                    WHEN 'admin' THEN 1
+                    WHEN 'petugas' THEN 2
+                    ELSE 3
+                END
+            ")
+            ->latest('created_at');
 
-        // Pencarian nama, username, atau email
+        // Pencarian nama, username, atau email.
         if ($request->filled('search')) {
             $search = $request->search;
 
             $query->where(function ($q) use ($search) {
-                $q->where('users.nama_lengkap', 'like', "%{$search}%")
-                    ->orWhere('users.username', 'like', "%{$search}%")
-                    ->orWhere('users.email', 'like', "%{$search}%");
+                $q->where('nama_lengkap', 'like', "%{$search}%")
+                    ->orWhere('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
-        // Filter berdasarkan role
-        if ($request->filled('role_id')) {
-            $query->where('users.role_id', $request->role_id);
+        // Filter berdasarkan role enum.
+        if ($request->filled('role')) {
+            $query->where(
+                'role',
+                $request->role
+            );
         }
 
-        // Pagination tetap 10 pengguna per halaman
-        $users = $query->paginate(10)->withQueryString();
+        // Filter berdasarkan status.
+        if ($request->filled('status')) {
+            $query->where(
+                'status',
+                $request->status
+            );
+        }
 
-        $roles = Role::all();
+        // Pagination 10 pengguna per halaman.
+        $users = $query
+            ->paginate(10)
+            ->withQueryString();
 
-        return view('admin.users.index', compact('users', 'roles'));
+        return view('admin.users.index', compact('users'));
     }
 
     /**
@@ -59,8 +69,7 @@ class UserController extends Controller
      */
     public function create(): View
     {
-        $roles = Role::all();
-        return view('admin.users.create', compact('roles'));
+        return view('admin.users.create');
     }
 
     /**
@@ -69,76 +78,195 @@ class UserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'username'     => 'required|string|max:50|alpha_dash|unique:users,username',
-            'email'        => 'required|email|max:255|unique:users,email',
-            'no_whatsapp'  => 'nullable|string|max:20',
-            'password'     => 'required|string|min:8',
-            'role_id'      => 'required|exists:roles,id',
-            'status'       => 'required|in:aktif,nonaktif',
-            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'nama_lengkap' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'alpha_dash',
+                'unique:users,username',
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                'unique:users,email',
+            ],
+            'no_whatsapp' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+            'role' => [
+                'required',
+                Rule::in(['admin', 'petugas']),
+            ],
+            'status' => [
+                'required',
+                Rule::in(['aktif', 'nonaktif']),
+            ],
+            'foto' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:2048',
+            ],
         ]);
 
-        // Upload foto jika ada
+        // Upload foto jika ada.
         if ($request->hasFile('foto')) {
-            $validated['foto'] = $request->file('foto')->store('profile-photos', 'public');
+            $validated['foto'] = $request
+                ->file('foto')
+                ->store('foto-pengguna', 'public');
         }
 
-        $validated['password'] = Hash::make($validated['password']);
+        // Hash password sebelum disimpan.
+        $validated['password'] = Hash::make(
+            $validated['password']
+        );
 
         User::create($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna baru berhasil ditambahkan!');
+        return redirect()
+            ->route('admin.users.index')
+            ->with(
+                'success',
+                'Pengguna baru berhasil ditambahkan!'
+            );
     }
 
     /**
-     * Tampilkan detail pengguna.
-     */
-    public function show() {}
-
-    /** 
      * Tampilkan form edit pengguna.
      */
     public function edit(User $user): View
     {
-        $roles = Role::all();
-        return view('admin.users.edit', compact('user', 'roles'));
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
      * Perbarui data pengguna di database.
      */
-    public function update(Request $request, User $user): RedirectResponse
-    {
-        $validated = $request->validate([
-            'nama_lengkap' => 'required|string|max:255',
-            'username'     => 'required|string|max:50|alpha_dash|unique:users,username,' . $user->id,
-            'email'        => 'required|email|max:255|unique:users,email,' . $user->id,
-            'no_whatsapp'  => 'nullable|string|max:20',
-            'password'     => 'nullable|string|min:8',
-            'role_id'      => 'required|exists:roles,id',
-            'status'       => 'required|in:aktif,nonaktif',
-            'foto'         => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
-        ]);
-
-        // Penanganan upload foto baru
-        if ($request->hasFile('foto')) {
-            if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-                Storage::disk('public')->delete($user->foto);
-            }
-            $validated['foto'] = $request->file('foto')->store('profile-photos', 'public');
+    public function update(
+        Request $request,
+        User $user
+    ): RedirectResponse {
+        // Akun sendiri harus tetap menggunakan role dan status
+        // yang sudah tersimpan karena kedua field pada form edit
+        // dapat dinonaktifkan.
+        if (Auth::id() === $user->id) {
+            $request->merge([
+                'role' => $user->role,
+                'status' => $user->status,
+            ]);
         }
 
-        // Update password hanya jika diisi
+        $validated = $request->validate([
+            'nama_lengkap' => [
+                'required',
+                'string',
+                'max:255',
+            ],
+            'username' => [
+                'required',
+                'string',
+                'max:255',
+                'alpha_dash',
+                Rule::unique('users', 'username')
+                    ->ignore($user->id),
+            ],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')
+                    ->ignore($user->id),
+            ],
+            'no_whatsapp' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+            'password' => [
+                'nullable',
+                'string',
+                'min:8',
+                'confirmed',
+            ],
+            'role' => [
+                'required',
+                Rule::in(['admin', 'petugas']),
+            ],
+            'status' => [
+                'required',
+                Rule::in(['aktif', 'nonaktif']),
+            ],
+            'foto' => [
+                'nullable',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'max:2048',
+            ],
+        ]);
+
+        // Cegah perubahan role atau penonaktifan akun sendiri.
+        if (Auth::id() === $user->id) {
+            if (
+                $validated['role'] !== $user->role ||
+                $validated['status'] !== 'aktif'
+            ) {
+                return back()
+                    ->withInput()
+                    ->withErrors([
+                        'role' => 'Role akun sendiri tidak dapat diubah dan akun harus tetap aktif.',
+                    ]);
+            }
+        }
+
+        // Upload foto baru jika ada.
+        if ($request->hasFile('foto')) {
+            $fotoLama = $user->foto;
+
+            $fotoBaru = $request
+                ->file('foto')
+                ->store('foto-pengguna', 'public');
+
+            $validated['foto'] = $fotoBaru;
+
+            // Hapus foto lama setelah upload foto baru berhasil.
+            if ($fotoLama) {
+                Storage::disk('public')->delete($fotoLama);
+            }
+        }
+
+        // Ubah password hanya jika kolom diisi.
         if ($request->filled('password')) {
-            $validated['password'] = Hash::make($validated['password']);
+            $validated['password'] = Hash::make(
+                $validated['password']
+            );
         } else {
             unset($validated['password']);
         }
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'Data pengguna berhasil diperbarui!');
+        return redirect()
+            ->route('admin.users.index')
+            ->with(
+                'success',
+                'Data pengguna berhasil diperbarui!'
+            );
     }
 
     /**
@@ -146,17 +274,30 @@ class UserController extends Controller
      */
     public function destroy(User $user): RedirectResponse
     {
-        // Mencegah hapus akun sendiri
-        if (auth()->id() === $user->id) {
-            return redirect()->back()->with('error', 'Anda tidak dapat menghapus akun Anda sendiri!');
+        // Mencegah penghapusan akun sendiri.
+        if (Auth::id() === $user->id) {
+            return redirect()
+                ->route('admin.users.index')
+                ->with(
+                    'error',
+                    'Anda tidak dapat menghapus akun Anda sendiri!'
+                );
         }
 
-        if ($user->foto && Storage::disk('public')->exists($user->foto)) {
-            Storage::disk('public')->delete($user->foto);
-        }
+        $foto = $user->foto;
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'Pengguna berhasil dihapus!');
+        // Hapus foto profil setelah pengguna berhasil dihapus.
+        if ($foto) {
+            Storage::disk('public')->delete($foto);
+        }
+
+        return redirect()
+            ->route('admin.users.index')
+            ->with(
+                'success',
+                'Pengguna berhasil dihapus!'
+            );
     }
 }

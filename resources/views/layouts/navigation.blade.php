@@ -178,17 +178,6 @@
                     </p>
                 </div>
 
-                {{-- <!-- Profile Link -->
-                <div class="px-2">
-                    <a
-                        href="{{ route('profile.edit') }}"
-                        class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 transition hover:bg-indigo-50 hover:text-indigo-600"
-                    >
-                        <i class="fa-regular fa-user w-5 text-center text-base"></i>
-                        <span>Edit Profil</span>
-                    </a>
-                </div> --}}
-
                 <!-- Divider -->
                 <div class="my-1 border-t border-slate-100"></div>
 

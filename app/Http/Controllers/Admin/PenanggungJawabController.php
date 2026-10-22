@@ -22,7 +22,7 @@ class PenanggungJawabController extends Controller
                         ->orWhere('email', 'like', "%{$search}%");
                 });
             })
-            ->oldest()
+            ->latest()
             ->paginate(10)
             ->withQueryString();
 

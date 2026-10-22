@@ -1,16 +1,9 @@
-
 <?php
 
 use Illuminate\Support\Facades\Route;
 
-// ==========================================
-// IMPORT CONTROLLER
-// ==========================================
-
 // Controller Admin
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ProfileController;
-use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\KategoriController;
 use App\Http\Controllers\Admin\LokasiController;
@@ -19,84 +12,63 @@ use App\Http\Controllers\Admin\PenanggungJawabController;
 // Controller Petugas
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
 
-
-// ==========================================
-// 1. HALAMAN UTAMA / WELCOME
-// ==========================================
-// Route welcome dinonaktifkan sementara.
-// Aktifkan kembali jika ingin menampilkan halaman welcome.
-// Route::view('/', 'welcome')->name('welcome');
-
-
 // ==========================================
 // 1. HALAMAN UTAMA
 // ==========================================
-// Halaman utama langsung menuju login.
+
 Route::redirect('/', '/login');
 
-
-// AKTIFKAN KEMBALI JIKA INGIN HALAMAN UTAMA
-// LANGSUNG MENUJU DASHBOARD ADMIN:
-// Route::get('/', [DashboardController::class, 'index']);
-
-
 // ==========================================
-// 2. REDIRECT DASHBOARD
+// 2. ROUTE ADMIN
 // ==========================================
 
-// Dashboard tetap memerlukan login karena diarahkan
-// ke dashboard admin yang dilindungi middleware auth.
-Route::redirect('/dashboard', '/admin/dashboard');
+// Middleware role dinonaktifkan sementara.
+// Aktifkan kembali setelah CheckRole siap digunakan.
+Route::middleware(['auth'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
+        // Dashboard Admin
+        Route::view('/dashboard', 'admin.dashboard')
+            ->name('dashboard');
 
-// ==========================================
-// 3. ROUTE ADMIN
-// ==========================================
+        // Manajemen Pengguna
+        Route::resource('users', UserController::class)
+            ->names(['users']);
 
-Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
+        // Manajemen Kategori
+        Route::resource('kategori', KategoriController::class)
+            ->names('kategori');
 
-    // Dashboard Admin
-    Route::get('/dashboard', [DashboardController::class, 'index'])
-        ->name('dashboard');
+        // Manajemen Lokasi dan Ruangan
+        Route::resource('lokasi', LokasiController::class)
+            ->names('lokasi');
 
-    // Manajemen Role
-    Route::resource('roles', RoleController::class)
-        ->names('role');
-
-    // Manajemen Kategori
-    Route::resource('kategori', KategoriController::class)
-        ->names('kategori');
-
-    // Manajemen Lokasi dan Ruangan
-    Route::resource('lokasi', LokasiController::class)
-        ->names('lokasi');
-
-    // Manajemen Penanggung Jawab
-    Route::resource('penanggung_jawab', PenanggungJawabController::class)
-        ->names('penanggung_jawab');
-
-    // Manajemen Pengguna
-    Route::resource('users', UserController::class)
-        ->names('users');
-});
-
+        // Manajemen Penanggung Jawab
+        Route::resource(
+            'penanggung_jawab',
+            PenanggungJawabController::class
+        )->names('penanggung_jawab');
+    });
 
 // ==========================================
-// 4. ROUTE PETUGAS
+// 3. ROUTE PETUGAS
 // ==========================================
 
-Route::middleware(['auth'])->prefix('petugas')->name('petugas.')->group(function () {
+Route::middleware(['auth'])
+    ->prefix('petugas')
+    ->name('petugas.')
+    ->group(function () {
 
-    // Dashboard Petugas
-    Route::get('/dashboard', [PetugasDashboardController::class, 'index'])
-        ->name('dashboard');
+        Route::view('/dashboard', 'petugas.dashboard')
+            ->name('dashboard');
 
-    // Tambahkan route khusus petugas di sini.
-});
-
+        // Tambahkan route khusus petugas di sini.
+    });
 
 // ==========================================
-// 5. ROUTE PROFIL PENGGUNA
+// 4. ROUTE PROFIL PENGGUNA
 // ==========================================
 
 Route::middleware(['auth'])->group(function () {
@@ -111,11 +83,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('profile.delete-photo');
 });
 
-
 // ==========================================
-// 6. ROUTE AUTENTIKASI
+// 5. ROUTE AUTENTIKASI
 // ==========================================
 
-// Mengaktifkan route login, logout, dan route autentikasi
-// lain yang didefinisikan dalam routes/auth.php.
 require __DIR__ . '/auth.php';

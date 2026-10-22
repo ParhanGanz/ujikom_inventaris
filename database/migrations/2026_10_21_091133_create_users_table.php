@@ -20,8 +20,14 @@ return new class extends Migration
             $table->string('no_whatsapp', 20)->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->foreignId('role_id')->constrained('roles')->cascadeOnDelete();
-            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
+
+            // Role pengguna
+            $table->enum('role', ['admin', 'petugas'])
+                ->default('petugas');
+
+            $table->enum('status', ['aktif', 'nonaktif'])
+                ->default('aktif');
+
             $table->rememberToken();
             $table->timestamps();
         });
@@ -47,8 +53,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
-        Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
+        Schema::dropIfExists('password_reset_tokens');
+        Schema::dropIfExists('users');
     }
 };
